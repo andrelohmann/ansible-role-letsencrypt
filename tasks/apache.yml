@@ -1,0 +1,34 @@
+---
+- name: install required packages
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+    dpkg_options: 'force-confnew,force-confdef'
+  with_items:
+  - apache2
+
+- name: create letsencrypt folder
+  file:
+    path: "{{ letsencrypt_webroot_path }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: create letsencrypt config file
+  template:
+    src: apache.letsencrypt.conf.j2
+    dest: "/etc/apache2/conf-available/letsencrypt.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: enable letsencrypt config
+  command: a2enconf letsencrypt.conf
+
+- name: reload apache
+  service:
+    state: reloaded
+    name: apache2
+
+...

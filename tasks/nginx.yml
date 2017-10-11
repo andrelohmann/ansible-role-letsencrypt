@@ -1,0 +1,38 @@
+---
+- name: install required packages
+  apt:
+    pkg: "{{ item }}"
+    state: installed
+    dpkg_options: 'force-confnew,force-confdef'
+  with_items:
+  - nginx
+
+- name: create letsencrypt folder
+  file:
+    path: "{{ letsencrypt_webroot_path }}"
+    state: directory
+    owner: www-data
+    group: www-data
+    mode: 0755
+
+- name: create letsencrypt snippet file
+  template:
+    src: nginx.letsencrypt.conf.j2
+    dest: "/etc/nginx/snippets/letsencrypt.conf"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: import letsencrypt snippet into default
+  lineinfile:
+    dest: "/etc/nginx/sites-available/default"
+    regexp: '^\s*include /etc/nginx/snippets/letsencrypt.conf;'
+    insertafter: '^\s*listen.*80 default_server;'
+    line: "\tinclude /etc/nginx/snippets/letsencrypt.conf;"
+
+- name: reload nginx
+  service:
+    state: reloaded
+    name: nginx
+
+...

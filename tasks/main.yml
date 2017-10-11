@@ -1,0 +1,83 @@
+---
+- name: install packages
+  apt:
+    name: "{{item}}"
+    state: installed
+    dpkg_options: 'force-confnew,force-confdef'
+    autoremove: yes
+  with_items:
+  - letsencrypt
+
+- name: delete default cronjob
+  file:
+    state: absent
+    path: /etc/cron.d/letsencrypt
+
+- name: create /etc/letsencrypt/ini directory
+  file:
+    state: directory
+    path: /etc/letsencrypt/ini
+
+- name: include apache webroot config
+  include: apache.yml
+  when: letsencrypt_authenticator == 'webroot' and letsencrypt_webserver == 'apache'
+
+- name: include nginx webroot config
+  include: nginx.yml
+  when: letsencrypt_authenticator == 'webroot' and letsencrypt_webserver == 'nginx'
+
+- name: run pre hook
+  command: "{{ letsencrypt_prehook }}"
+  when: letsencrypt_prehook is defined
+  ignore_errors: True
+
+- name: use standalone authenticator
+  include: standalone.yml
+  with_items: "{{ letsencrypt_inis }}"
+  when: letsencrypt_authenticator == 'standalone'
+  loop_control:
+    loop_var: ini
+
+- name: use webroot authenticator
+  include: webroot.yml
+  with_items: "{{ letsencrypt_inis }}"
+  when: letsencrypt_authenticator == 'webroot'
+  loop_control:
+    loop_var: ini
+
+- name: run post hook
+  command: "{{ letsencrypt_posthook }}"
+  when: letsencrypt_posthook is defined
+  ignore_errors: True
+
+- name: set prehook string
+  set_fact:
+    _prehook: ' --pre-hook "{{ letsencrypt_prehook }}"'
+  when: letsencrypt_prehook is defined
+
+- name: set prehook empty string
+  set_fact:
+    _prehook: ''
+  when: letsencrypt_prehook is not defined
+
+- name: set posthook string
+  set_fact:
+    _posthook: ' --post-hook "{{ letsencrypt_posthook }}"'
+  when: letsencrypt_posthook is defined
+
+- name: set posthook empty string
+  set_fact:
+    _posthook: ''
+  when: letsencrypt_posthook is not defined
+
+- name: create renew cron job
+  cron:
+    name: letsencrypt_renew
+    month: "*"
+    day: "1"
+    hour: "2"
+    minute: "0"
+    user: root
+    job: 'letsencrypt renew --non-interactive{{ _prehook }}{{ _posthook }}'
+
+...

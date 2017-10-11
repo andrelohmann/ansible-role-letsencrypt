@@ -1,0 +1,14 @@
+---
+
+- name: create ini file
+  template:
+    src: domain.j2
+    dest: "/etc/letsencrypt/ini/{{ ini.name }}.ini"
+    owner: root
+    group: root
+    mode: 0644
+
+- name: create certificate
+  command: "letsencrypt certonly --webroot --non-interactive --text --agree-tos -c /etc/letsencrypt/ini/{{ ini.name }}.ini"
+
+...
