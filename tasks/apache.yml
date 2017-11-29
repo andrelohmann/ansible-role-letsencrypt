@@ -2,8 +2,12 @@
 - name: install required packages
   apt:
     pkg: "{{ item }}"
-    state: installed
+    state: latest
     dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
   with_items:
   - apache2
 
