@@ -55,7 +55,7 @@
 
 - name: set prehook string
   set_fact:
-    _prehook: ' --pre-hook "{{ letsencrypt_prehook }}"'
+    _prehook: "{{ letsencrypt_prehook }}; "
   when: letsencrypt_prehook is defined
 
 - name: set prehook empty string
@@ -65,7 +65,7 @@
 
 - name: set posthook string
   set_fact:
-    _posthook: ' --post-hook "{{ letsencrypt_posthook }}"'
+    _posthook: "; {{ letsencrypt_posthook }}"
   when: letsencrypt_posthook is defined
 
 - name: set posthook empty string
@@ -81,6 +81,6 @@
     hour: "2"
     minute: "0"
     user: root
-    job: 'letsencrypt renew --non-interactive{{ _prehook }}{{ _posthook }}'
+    job: '{{ _prehook }}letsencrypt renew --non-interactive{{ _posthook }}'
 
 ...
