@@ -1,4 +1,8 @@
 ---
+- name: add certbot ppa
+  apt_repository:
+    repo: ppa:certbot/certbot
+
 - name: install packages
   apt:
     name: "{{item}}"
@@ -9,12 +13,12 @@
     update_cache: yes
     cache_valid_time: 3600
   with_items:
-  - letsencrypt
+  - certbot
 
 - name: delete default cronjob
   file:
     state: absent
-    path: /etc/cron.d/letsencrypt
+    path: /etc/cron.d/certbot
 
 - name: create /etc/letsencrypt/ini directory
   file:
@@ -81,6 +85,6 @@
     hour: "2"
     minute: "0"
     user: root
-    job: '{{ _prehook }}letsencrypt renew --non-interactive{{ _posthook }}'
+    job: '{{ _prehook }}certbot renew -n{{ _posthook }}'
 
 ...
