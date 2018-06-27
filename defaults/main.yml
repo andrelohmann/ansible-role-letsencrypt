@@ -1,5 +1,6 @@
 ---
 
 letsencrypt_authenticator: standalone
+letsencrypt_webroot_path: /var/www/letsencrypt
 
 ...
