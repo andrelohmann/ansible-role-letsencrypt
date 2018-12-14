@@ -9,6 +9,6 @@
     mode: 0644
 
 - name: create certificate
-  command: "certbot certonly --standalone -n --agree-tos -c /etc/letsencrypt/ini/{{ ini.name }}.ini"
+  command: "certbot certonly --standalone -n --agree-tos -c /etc/letsencrypt/ini/{{ ini.name }}.ini --expand"
 
 ...
