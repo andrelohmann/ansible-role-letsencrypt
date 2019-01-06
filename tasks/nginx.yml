@@ -30,7 +30,7 @@
 
 - name: import letsencrypt snippet into default
   lineinfile:
-    past: "/etc/nginx/sites-available/default"
+    path: "/etc/nginx/sites-available/default"
     regexp: '^\s*include /etc/nginx/snippets/letsencrypt.conf;'
     insertafter: '^\s*listen.*80 default_server;'
     line: "\tinclude /etc/nginx/snippets/letsencrypt.conf;"
