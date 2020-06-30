@@ -8,7 +8,7 @@ This role installs letsencrypt
 Role Variables
 --------------
 
-    letsencrypt_authenticator: standard/webroot
+    letsencrypt_authenticator: standalone/webroot
     letsencrypt_webroot_path: /var/www/letsencrypt # optional, only set, if authenticator webroot is chosen
     letsencrypt_prehook: "service nginx stop"
     letsencrypt_posthook: "service nginx start"
