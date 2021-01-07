@@ -30,7 +30,7 @@ Example Playbook
 
     - hosts: all
       roles:
-         - { role: andrelohmann.letsencrypt }
+      - { role: andrelohmann.letsencrypt }
 
 License
 -------
