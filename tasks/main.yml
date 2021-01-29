@@ -1,4 +1,17 @@
 ---
+- name: install snapd
+  apt:
+    name: "{{ packages }}"
+    state: latest
+    dpkg_options: 'force-confnew,force-confdef'
+    autoclean: yes
+    autoremove: yes
+    update_cache: yes
+    cache_valid_time: 3600
+  vars:
+    packages:
+    - snapd
+
 - name: Install certbot via snap
   snap:
     name: certbot
